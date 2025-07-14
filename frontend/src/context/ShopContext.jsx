@@ -16,12 +16,12 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState(getDefaultCart());
 
   useEffect(()=>{
-    fetch('https://e-commerce-app-backend-73bp.onrender.com/')
+    fetch('https://e-commerce-app-backend-73bp.onrender.com/allproducts')
     .then((response)=>response.json())
     .then((data)=>setAll_Product(data))
     
     if (localStorage.getItem('auth-token')) {
-      fetch('https://e-commerce-app-backend-73bp.onrender.com/', {
+      fetch('https://e-commerce-app-backend-73bp.onrender.com/getcart', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ const ShopContextProvider = (props) => {
   const addToCart = (itemId) => {
     setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
     if (localStorage.getItem('auth-token')) {
-      fetch('https://e-commerce-app-backend-73bp.onrender.com/', {
+      fetch('https://e-commerce-app-backend-73bp.onrender.com/addtocart', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ const ShopContextProvider = (props) => {
     });
   
     if (localStorage.getItem('auth-token')) {
-      fetch('https://e-commerce-app-backend-73bp.onrender.com/', {
+      fetch('https://e-commerce-app-backend-73bp.onrender.com/removefromcart', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
