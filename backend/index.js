@@ -1,4 +1,4 @@
-const port = 4000;
+const port = process.env.PORT || 4000;
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -9,11 +9,7 @@ const cors = require("cors");
 
 
 app.use(express.json());
-//app.use(cors());
-app.use(cors({
-  origin: ['http://localhost:4000', 'https://lovely-melba-77e203.netlify.app/']
-}));
-
+app.use(cors());
 
 // Database connection with Mongodb
 
