@@ -269,3 +269,27 @@
         font-size: 16px;
     }
 }
+.size-option {
+  border: 1px solid #ddd;
+  padding: 8px 14px;
+  cursor: pointer;
+  margin-right: 10px;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+}
+
+.size-option:hover {
+  background-color: #f3f3f3;
+}
+
+.size-option.selected {
+  background-color: black;
+  color: white;
+  font-weight: bold;
+}
+
+.add-to-cart-button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
