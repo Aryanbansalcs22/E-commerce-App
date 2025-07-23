@@ -3,10 +3,22 @@ import './ProductDisplay.css'
 import star_icon from '../Assets/star_icon.png'
 import star_dull_icon from '../Assets/star_dull_icon.png'
 import { ShopContext } from '../../context/ShopContext'
+import { useNavigate } from 'react-router-dom' 
 
 const ProductDisplay = (props) => {
-    const {product} = props;
-    const {addToCart} = useContext(ShopContext);
+    const { product } = props;
+    const { addToCart } = useContext(ShopContext);
+    const navigate = useNavigate(); 
+
+    const handleAddToCart = () => {
+        const token = localStorage.getItem("auth-token");
+        if (!token) {
+            navigate("/login"); 
+        } else {
+            addToCart(product.id); 
+        }
+    };
+
     return (
         <div className="productdisplay">
             <div className="productdisplay-left">
@@ -19,8 +31,8 @@ const ProductDisplay = (props) => {
                 <div className="productdisplay-img">
                     <img className='productdisplay-main-img' src={product.image} alt="" />
                 </div>
-
             </div>
+
             <div className="productdisplay-right">
                 <h1>{product.name}</h1>
                 <div className="productdisplay-right-stars">
@@ -48,13 +60,12 @@ const ProductDisplay = (props) => {
                         <div>XXL</div>
                     </div>
                 </div>
-                <button onClick={()=> {addToCart(product.id)}}>ADD TO CART</button>
-                <p className="productdisplay-right-category"><span>Category :</span>Women , T-shirt, Crop Top</p>
-                <p className="productdisplay-right-category"><span>Tags :</span>Modern, Latest</p>
-
+                <button onClick={handleAddToCart}>ADD TO CART</button>
+                <p className="productdisplay-right-category"><span>Category :</span> Women, T-shirt, Crop Top</p>
+                <p className="productdisplay-right-category"><span>Tags :</span> Modern, Latest</p>
             </div>
-
         </div>
     )
 }
+
 export default ProductDisplay
