@@ -5,19 +5,18 @@ import Offers from '../components/Offers/Offers'
 import NewCollections from '../components/NewCollections/NewCollections'
 import NewsLetter from '../components/NewsLetter/NewsLetter'
 
-
-
-
-
 const Shop = () => {
-    return(
+    return (
         <div>
-            <Hero/>
-            <Popular/>
-            <Offers/>
-            <NewCollections/>
-            <NewsLetter/>
+            <Hero />
+            <Popular />
+            <Offers />
+            <div id="new-collections">
+                <NewCollections />
+            </div>
+            <NewsLetter />
         </div>
     )
 }
+
 export default Shop
