@@ -1,9 +1,9 @@
-""import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 
 export const ShopContext = createContext(null);
 
 const getDefaultCart = () => {
-  let cart = {};
+  let cart = {};  
   for (let index = 0; index <= 300; index++) {
     cart[index] = 0;
   }
@@ -15,7 +15,6 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState(getDefaultCart());
   const [sizeData, setSizeData] = useState({}); // ✅ sizes for cart items
 
-  // ✅ Fetch all products & cart from backend
   useEffect(() => {
     fetch('https://e-commerce-app-backend-73bp.onrender.com/allproducts')
       .then((res) => res.json())
@@ -24,7 +23,6 @@ const ShopContextProvider = (props) => {
     fetchCartFromBackend();
   }, []);
 
-  // ✅ Fetch cart and sizes from backend
   const fetchCartFromBackend = async () => {
     const token = localStorage.getItem("auth-token");
     if (!token) return;
@@ -49,7 +47,6 @@ const ShopContextProvider = (props) => {
     }
   };
 
-  // ✅ Add item to cart with size
   const addToCart = (itemId, size) => {
     setCartItems((prev) => ({ ...prev, [itemId]: (prev[itemId] || 0) + 1 }));
     setSizeData((prev) => ({ ...prev, [itemId]: size }));
@@ -78,7 +75,6 @@ const ShopContextProvider = (props) => {
     }
   };
 
-  // ✅ Remove item from cart (size stays as-is)
   const removeFromCart = (itemId) => {
     setCartItems((prev) => {
       const updated = { ...prev };
@@ -126,7 +122,7 @@ const ShopContextProvider = (props) => {
   const contextValue = {
     all_product,
     cartItems,
-    sizeData, // ✅ expose to display sizes
+    sizeData,
     addToCart,
     removeFromCart,
     getTotalCartAmount,
@@ -141,4 +137,4 @@ const ShopContextProvider = (props) => {
   );
 };
 
-export default ShopContextProvider
+export default ShopContextProvider;
