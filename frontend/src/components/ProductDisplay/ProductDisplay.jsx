@@ -1,110 +1,85 @@
 import React, { useContext, useState } from "react";
 import "./ProductDisplay.css";
-import { useParams } from "react-router-dom";
-import { ShopContext } from "../../context/ShopContext";
 import star_icon from "../Assets/star_icon.png";
 import star_dull_icon from "../Assets/star_dull_icon.png";
+import { ShopContext } from "../../context/ShopContext";
 
-const ProductDisplay = () => {
-  const { all_product, addToCart } = useContext(ShopContext);
-  const { productId } = useParams();
-  const product = all_product.find((item) => item.id === Number(productId));
+const ProductDisplay = ({ product }) => {
+  const { addToCart } = useContext(ShopContext);
   const [selectedSize, setSelectedSize] = useState("");
+  const [error, setError] = useState("");
 
-  if (!product) return <div>Product not found.</div>;
-
-  const handleAddToCart = async () => {
-    const token = localStorage.getItem("auth-token");
-
-    if (!token) {
-      alert("Please login to add items to cart.");
-      return;
-    }
-
+  const handleAddToCart = () => {
     if (!selectedSize) {
-      alert("Please select a size.");
+      setError("Please select a size before adding to cart.");
       return;
     }
-
-    try {
-      const response = await fetch("https://e-commerce-app-backend-73bp.onrender.com/addtocart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "auth-token": token,
-        },
-        body: JSON.stringify({ itemId: product.id, size: selectedSize }),
-      });
-
-      const data = await response.text();
-      if (response.ok) {
-        addToCart(product.id); // Context update
-        alert("Item added to cart!");
-      } else {
-        alert("Failed to add to cart: " + data);
-      }
-    } catch (error) {
-      console.error("Add to cart error:", error);
-      alert("An error occurred. Try again.");
-    }
+    setError("");
+    addToCart(product.id, selectedSize); // pass size to context
   };
 
   return (
     <div className="productdisplay">
       <div className="productdisplay-left">
+        <div className="productdisplay-img-list">
+          <img src={product.image} alt="" />
+          <img src={product.image} alt="" />
+          <img src={product.image} alt="" />
+          <img src={product.image} alt="" />
+        </div>
         <div className="productdisplay-img">
-          <img className="productdisplay-main-img" src={product.image} alt={product.name} />
+          <img className="productdisplay-main-img" src={product.image} alt="" />
         </div>
       </div>
 
       <div className="productdisplay-right">
         <h1>{product.name}</h1>
-
         <div className="productdisplay-right-stars">
-          <img src={star_icon} alt="star" />
-          <img src={star_icon} alt="star" />
-          <img src={star_icon} alt="star" />
-          <img src={star_icon} alt="star" />
-          <img src={star_dull_icon} alt="star" />
+          <img src={star_icon} alt="" />
+          <img src={star_icon} alt="" />
+          <img src={star_icon} alt="" />
+          <img src={star_icon} alt="" />
+          <img src={star_dull_icon} alt="" />
           <p>(122)</p>
         </div>
-
         <div className="productdisplay-right-prices">
-          <div className="productdisplay-right-price-old">₹{product.old_price}</div>
-          <div className="productdisplay-right-price-new">₹{product.new_price}</div>
+          <div className="productdisplay-right-price-old">${product.old_price}</div>
+          <div className="productdisplay-right-price-new">${product.new_price}</div>
         </div>
-
         <div className="productdisplay-right-description">
-          Elevate your wardrobe with this premium product. Designed for style and comfort.
+          {product.description || "High-quality fabric, stylish fit, perfect for any occasion."}
         </div>
-
-        {/* Size Selection */}
         <div className="productdisplay-right-size">
           <h1>Select Size</h1>
           <div className="productdisplay-right-sizes">
             {["S", "M", "L", "XL", "XXL"].map((size) => (
-              <div
+              <button
                 key={size}
-                className={`size-option ${selectedSize === size ? "selected" : ""}`}
+                className={selectedSize === size ? "selected" : ""}
                 onClick={() => setSelectedSize(size)}
               >
                 {size}
-              </div>
+              </button>
             ))}
           </div>
         </div>
 
+        {error && <p className="error-text">{error}</p>}
+
         <button
-          className="add-to-cart-button"
-          disabled={!selectedSize}
           onClick={handleAddToCart}
+          className="add-to-cart-btn"
+          disabled={!selectedSize}
         >
-          {selectedSize ? "ADD TO CART" : "SELECT SIZE FIRST"}
+          Add to Cart
         </button>
 
-        <div className="productdisplay-right-category">
-          <span>Category: </span>{product.category}
-        </div>
+        <p className="productdisplay-right-category">
+          <span>Category :</span> {product.category}
+        </p>
+        <p className="productdisplay-right-category">
+          <span>Tags :</span> Modern, Latest
+        </p>
       </div>
     </div>
   );
