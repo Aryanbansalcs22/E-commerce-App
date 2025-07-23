@@ -13,8 +13,9 @@ const getDefaultCart = () => {
 const ShopContextProvider = (props) => {
   const [all_product, setAll_Product] = useState([]);
   const [cartItems, setCartItems] = useState(getDefaultCart());
+  const [sizeData, setSizeData] = useState({}); // ✅ sizes for cart items
 
-  // ✅ Fetch all products & user cart on initial mount
+  // ✅ Fetch all products & cart from backend
   useEffect(() => {
     fetch('https://e-commerce-app-backend-73bp.onrender.com/allproducts')
       .then((res) => res.json())
@@ -23,7 +24,7 @@ const ShopContextProvider = (props) => {
     fetchCartFromBackend();
   }, []);
 
-  // ✅ Reusable cart fetcher
+  // ✅ Fetch cart and sizes from backend
   const fetchCartFromBackend = async () => {
     const token = localStorage.getItem("auth-token");
     if (!token) return;
@@ -40,14 +41,18 @@ const ShopContextProvider = (props) => {
 
       const data = await res.json();
       console.log("Fetched cart from backend:", data);
-      setCartItems(data);
+
+      if (data.cartData) setCartItems(data.cartData);
+      if (data.sizeData) setSizeData(data.sizeData);
     } catch (err) {
       console.error("GetCart Error:", err);
     }
   };
 
-  const addToCart = (itemId) => {
-    setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
+  // ✅ Add item to cart with size
+  const addToCart = (itemId, size) => {
+    setCartItems((prev) => ({ ...prev, [itemId]: (prev[itemId] || 0) + 1 }));
+    setSizeData((prev) => ({ ...prev, [itemId]: size }));
 
     const token = localStorage.getItem("auth-token");
     if (token) {
@@ -57,7 +62,7 @@ const ShopContextProvider = (props) => {
           "Content-Type": "application/json",
           "auth-token": token,
         },
-        body: JSON.stringify({ itemId }),
+        body: JSON.stringify({ itemId, size }),
       })
         .then(async (res) => {
           const contentType = res.headers.get("content-type");
@@ -73,6 +78,7 @@ const ShopContextProvider = (props) => {
     }
   };
 
+  // ✅ Remove item from cart (size stays as-is)
   const removeFromCart = (itemId) => {
     setCartItems((prev) => {
       const updated = { ...prev };
@@ -120,11 +126,12 @@ const ShopContextProvider = (props) => {
   const contextValue = {
     all_product,
     cartItems,
+    sizeData, // ✅ expose to display sizes
     addToCart,
     removeFromCart,
     getTotalCartAmount,
     getTotalCartItems,
-    fetchCartFromBackend, // ✅ exported for Cart.jsx
+    fetchCartFromBackend,
   };
 
   return (
