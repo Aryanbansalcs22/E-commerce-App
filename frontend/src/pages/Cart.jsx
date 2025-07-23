@@ -6,8 +6,8 @@ const Cart = () => {
   const { fetchCartFromBackend } = useContext(ShopContext);
 
   useEffect(() => {
-    fetchCartFromBackend(); 
-  }, []);
+    fetchCartFromBackend(); // ensures fresh cart after login or reload
+  }, [fetchCartFromBackend]);
 
   return (
     <div>
