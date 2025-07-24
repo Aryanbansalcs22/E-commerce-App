@@ -1,33 +1,39 @@
-import React, { useContext, useState } from "react";
-import "./ProductDisplay.css";
+import React, { useContext, useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { ShopContext } from "../Context/ShopContext";
 import star_icon from "../Assets/star_icon.png";
 import star_dull_icon from "../Assets/star_dull_icon.png";
-import { ShopContext } from "../../context/ShopContext";
+import "./ProductDisplay.css";
 
-const ProductDisplay = ({ product }) => {
-  const { addToCart, isLoggedIn } = useContext(ShopContext);
-  const [selectedSize, setSelectedSize] = useState("");
-  const [error, setError] = useState("");
-  const [loginAlertShown, setLoginAlertShown] = useState(false); // 🚨
+const ProductDisplay = () => {
+  const { all_product, addToCart, isLoggedIn } = useContext(ShopContext);
+  const { productId } = useParams();
+  const [product, setProduct] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+
+  useEffect(() => {
+    const selectedProduct = all_product.find(
+      (item) => item.id === Number(productId)
+    );
+    setProduct(selectedProduct);
+  }, [all_product, productId]);
 
   const handleAddToCart = () => {
     if (!isLoggedIn) {
-      if (!loginAlertShown) {
-        alert("Please login first to add items to cart.");
-        setLoginAlertShown(true); // ✅ Don't show again
-      }
+      alert("Please login first");
       return;
     }
 
     if (!selectedSize) {
-      setError("Please select a size before adding to cart.");
+      alert("Please select a size");
       return;
     }
 
-    setError("");
     addToCart(product.id, selectedSize);
-    alert("Product added to cart!");
+    alert("Product added to cart");
   };
+
+  if (!product) return <div>Loading...</div>;
 
   return (
     <div className="productdisplay">
@@ -45,6 +51,7 @@ const ProductDisplay = ({ product }) => {
 
       <div className="productdisplay-right">
         <h1>{product.name}</h1>
+
         <div className="productdisplay-right-stars">
           {[...Array(4)].map((_, i) => (
             <img key={i} src={star_icon} alt="star" />
@@ -54,26 +61,18 @@ const ProductDisplay = ({ product }) => {
         </div>
 
         <div className="productdisplay-right-prices">
-          <div className="productdisplay-right-price-old">₹{product.old_price}</div>
-          <div className="productdisplay-right-price-new">₹{product.new_price}</div>
+          <div className="productdisplay-right-newprice">₹{product.new_price}</div>
+          <div className="productdisplay-right-oldprice">₹{product.old_price}</div>
         </div>
 
-        <p className="productdisplay-right-description">
-          {product.description ||
-            "Elevate your wardrobe with this premium product. Designed for style and comfort."}
-        </p>
-
         <div className="productdisplay-right-size">
-          <h3>Select Size</h3>
-          <div className="size-button-wrapper">
+          <p>Select Size:</p>
+          <div className="productdisplay-right-sizes">
             {["S", "M", "L", "XL", "XXL"].map((size) => (
               <button
                 key={size}
-                className={`size-option ${selectedSize === size ? "selected" : ""}`}
-                onClick={() => {
-                  setSelectedSize(size);
-                  setError("");
-                }}
+                onClick={() => setSelectedSize(size)}
+                className={selectedSize === size ? "active" : ""}
               >
                 {size}
               </button>
@@ -81,18 +80,7 @@ const ProductDisplay = ({ product }) => {
           </div>
         </div>
 
-        {error && <p className="error-text">{error}</p>}
-
-        <button onClick={handleAddToCart} className="add-to-cart-button">
-          ADD TO CART
-        </button>
-
-        <p className="productdisplay-right-category">
-          <span>Category :</span> {product.category}
-        </p>
-        <p className="productdisplay-right-category">
-          <span>Tags :</span> Modern, Latest
-        </p>
+        <button onClick={handleAddToCart}>ADD TO CART</button>
       </div>
     </div>
   );
