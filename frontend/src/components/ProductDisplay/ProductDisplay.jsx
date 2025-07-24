@@ -8,10 +8,14 @@ const ProductDisplay = ({ product }) => {
   const { addToCart, isLoggedIn } = useContext(ShopContext);
   const [selectedSize, setSelectedSize] = useState("");
   const [error, setError] = useState("");
+  const [loginAlertShown, setLoginAlertShown] = useState(false); // 🚨
 
   const handleAddToCart = () => {
     if (!isLoggedIn) {
-      alert("Please login first to add items to cart.");
+      if (!loginAlertShown) {
+        alert("Please login first to add items to cart.");
+        setLoginAlertShown(true); // ✅ Don't show again
+      }
       return;
     }
 
@@ -68,7 +72,7 @@ const ProductDisplay = ({ product }) => {
                 className={`size-option ${selectedSize === size ? "selected" : ""}`}
                 onClick={() => {
                   setSelectedSize(size);
-                  setError(""); // clear previous error
+                  setError("");
                 }}
               >
                 {size}
@@ -79,10 +83,7 @@ const ProductDisplay = ({ product }) => {
 
         {error && <p className="error-text">{error}</p>}
 
-        <button
-          onClick={handleAddToCart}
-          className="add-to-cart-button"
-        >
+        <button onClick={handleAddToCart} className="add-to-cart-button">
           ADD TO CART
         </button>
 
