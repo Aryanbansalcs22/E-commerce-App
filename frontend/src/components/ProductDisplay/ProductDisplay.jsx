@@ -15,7 +15,7 @@ const ProductDisplay = ({ product }) => {
       return;
     }
     setError("");
-    addToCart(product.id, selectedSize); // pass size to context
+    addToCart(product.id, selectedSize);
   };
 
   return (
@@ -35,27 +35,30 @@ const ProductDisplay = ({ product }) => {
       <div className="productdisplay-right">
         <h1>{product.name}</h1>
         <div className="productdisplay-right-stars">
-          <img src={star_icon} alt="" />
-          <img src={star_icon} alt="" />
-          <img src={star_icon} alt="" />
-          <img src={star_icon} alt="" />
-          <img src={star_dull_icon} alt="" />
+          {[...Array(4)].map((_, i) => (
+            <img key={i} src={star_icon} alt="star" />
+          ))}
+          <img src={star_dull_icon} alt="star dull" />
           <p>(122)</p>
         </div>
+
         <div className="productdisplay-right-prices">
-          <div className="productdisplay-right-price-old">${product.old_price}</div>
-          <div className="productdisplay-right-price-new">${product.new_price}</div>
+          <div className="productdisplay-right-price-old">₹{product.old_price}</div>
+          <div className="productdisplay-right-price-new">₹{product.new_price}</div>
         </div>
-        <div className="productdisplay-right-description">
-          {product.description || "High-quality fabric, stylish fit, perfect for any occasion."}
-        </div>
+
+        <p className="productdisplay-right-description">
+          {product.description ||
+            "Elevate your wardrobe with this premium product. Designed for style and comfort."}
+        </p>
+
         <div className="productdisplay-right-size">
-          <h1>Select Size</h1>
+          <h3>Select Size</h3>
           <div className="productdisplay-right-sizes">
             {["S", "M", "L", "XL", "XXL"].map((size) => (
               <button
                 key={size}
-                className={selectedSize === size ? "selected" : ""}
+                className={`size-option ${selectedSize === size ? "selected" : ""}`}
                 onClick={() => setSelectedSize(size)}
               >
                 {size}
@@ -68,10 +71,10 @@ const ProductDisplay = ({ product }) => {
 
         <button
           onClick={handleAddToCart}
-          className="add-to-cart-btn"
+          className="add-to-cart-button"
           disabled={!selectedSize}
         >
-          Add to Cart
+          ADD TO CART
         </button>
 
         <p className="productdisplay-right-category">
