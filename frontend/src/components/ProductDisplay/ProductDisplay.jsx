@@ -5,15 +5,21 @@ import star_dull_icon from "../Assets/star_dull_icon.png";
 import { ShopContext } from "../../context/ShopContext";
 
 const ProductDisplay = ({ product }) => {
-  const { addToCart } = useContext(ShopContext);
+  const { addToCart, isLoggedIn } = useContext(ShopContext); // Added isLoggedIn
   const [selectedSize, setSelectedSize] = useState("");
   const [error, setError] = useState("");
 
   const handleAddToCart = () => {
+    if (!isLoggedIn) {
+      alert("Please login first to add items to cart.");
+      return;
+    }
+
     if (!selectedSize) {
       setError("Please select a size before adding to cart.");
       return;
     }
+
     setError("");
     addToCart(product.id, selectedSize);
   };
@@ -72,7 +78,6 @@ const ProductDisplay = ({ product }) => {
         <button
           onClick={handleAddToCart}
           className="add-to-cart-button"
-          disabled={!selectedSize}
         >
           ADD TO CART
         </button>
