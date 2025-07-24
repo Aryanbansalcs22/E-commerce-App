@@ -61,13 +61,14 @@
     margin: 30px 0px;
     gap: 20px;
 }
-.productdisplay-right-sizes button {
+.size-option {
   padding: 18px 24px;
   background: #fbfbfb;
   border: 1px solid #ebebeb;
   border-radius: 3px;
   cursor: pointer;
 }
+
 
 .productdisplay-right button{
     padding: 20px 40px;
