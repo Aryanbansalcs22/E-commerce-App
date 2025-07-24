@@ -13,12 +13,16 @@ const getDefaultCart = () => {
 const ShopContextProvider = (props) => {
   const [all_product, setAll_Product] = useState([]);
   const [cartItems, setCartItems] = useState(getDefaultCart());
-  const [sizeData, setSizeData] = useState({}); // ✅ sizes for cart items
+  const [sizeData, setSizeData] = useState({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // ✅ new state
 
   useEffect(() => {
     fetch('https://e-commerce-app-backend-73bp.onrender.com/allproducts')
       .then((res) => res.json())
       .then((data) => setAll_Product(data));
+
+    const token = localStorage.getItem("auth-token");
+    if (token) setIsLoggedIn(true); // ✅ check login status
 
     fetchCartFromBackend();
   }, []);
@@ -128,6 +132,7 @@ const ShopContextProvider = (props) => {
     getTotalCartAmount,
     getTotalCartItems,
     fetchCartFromBackend,
+    isLoggedIn, // ✅ added to context
   };
 
   return (
