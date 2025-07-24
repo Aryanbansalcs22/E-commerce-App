@@ -1,86 +1,98 @@
-import React, { useContext, useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { ShopContext } from "../../context/ShopContext";
+import React, { useContext, useState } from "react";
+import "./ProductDisplay.css";
 import star_icon from "../Assets/star_icon.png";
 import star_dull_icon from "../Assets/star_dull_icon.png";
-import "./ProductDisplay.css";
+import { ShopContext } from "../../Context/ShopContext";
+import { useNavigate } from "react-router-dom";
 
-const ProductDisplay = () => {
-  const { all_product, addToCart, isLoggedIn } = useContext(ShopContext);
-  const { productId } = useParams();
-  const [product, setProduct] = useState(null);
-  const [selectedSize, setSelectedSize] = useState(null);
-
-  useEffect(() => {
-    const selectedProduct = all_product.find(
-      (item) => item.id === Number(productId)
-    );
-    setProduct(selectedProduct);
-  }, [all_product, productId]);
+const ProductDisplay = ({ product }) => {
+  const [selectedSize, setSelectedSize] = useState("");
+  const [showSizeError, setShowSizeError] = useState(false);
+  const [loginAlertShown, setLoginAlertShown] = useState(false);
+  const { addToCart } = useContext(ShopContext);
+  const navigate = useNavigate();
 
   const handleAddToCart = () => {
-    if (!isLoggedIn) {
-      alert("Please login first");
+    const token = localStorage.getItem("auth-token");
+
+    if (!token) {
+      if (!loginAlertShown) {
+        alert("Please login first!");
+        setLoginAlertShown(true);
+        navigate("/login");
+      }
       return;
     }
 
     if (!selectedSize) {
-      alert("Please select a size");
+      setShowSizeError(true);
       return;
     }
 
-    addToCart(product.id, selectedSize);
-    alert("Product added to cart");
+    addToCart(product.id);
+    setShowSizeError(false);
+    alert("Product added to cart successfully!");
   };
-
-  if (!product) return <div>Loading...</div>;
 
   return (
     <div className="productdisplay">
       <div className="productdisplay-left">
         <div className="productdisplay-img-list">
-          <img src={product.image} alt="" />
-          <img src={product.image} alt="" />
-          <img src={product.image} alt="" />
-          <img src={product.image} alt="" />
+          <img src={product.image} alt="small-1" />
+          <img src={product.image} alt="small-2" />
+          <img src={product.image} alt="small-3" />
+          <img src={product.image} alt="small-4" />
         </div>
         <div className="productdisplay-img">
-          <img className="productdisplay-main-img" src={product.image} alt="" />
+          <img className="productdisplay-main-img" src={product.image} alt="main" />
         </div>
       </div>
 
       <div className="productdisplay-right">
         <h1>{product.name}</h1>
-
         <div className="productdisplay-right-stars">
           {[...Array(4)].map((_, i) => (
             <img key={i} src={star_icon} alt="star" />
           ))}
           <img src={star_dull_icon} alt="star dull" />
-          <p>(122)</p>
         </div>
 
         <div className="productdisplay-right-prices">
-          <div className="productdisplay-right-newprice">₹{product.new_price}</div>
-          <div className="productdisplay-right-oldprice">₹{product.old_price}</div>
+          <div className="productdisplay-right-price-old">${product.old_price}</div>
+          <div className="productdisplay-right-price-new">${product.new_price}</div>
         </div>
 
+        <div className="productdisplay-right-description">{product.description}</div>
+
         <div className="productdisplay-right-size">
-          <p>Select Size:</p>
-          <div className="productdisplay-right-sizes">
+          <h3>Select Size</h3>
+          {showSizeError && <div className="error-text">Please select a size</div>}
+          <div className="size-button-wrapper">
             {["S", "M", "L", "XL", "XXL"].map((size) => (
-              <button
+              <div
                 key={size}
-                onClick={() => setSelectedSize(size)}
-                className={selectedSize === size ? "active" : ""}
+                className={`size-option ${selectedSize === size ? "selected" : ""}`}
+                onClick={() => {
+                  setSelectedSize(size);
+                  setShowSizeError(false);
+                }}
               >
                 {size}
-              </button>
+              </div>
             ))}
           </div>
         </div>
 
-        <button onClick={handleAddToCart}>ADD TO CART</button>
+        <button className="add-to-cart-button" onClick={handleAddToCart}>
+          Add to Cart
+        </button>
+
+        <p className="productdisplay-right-category">
+          <span>Category:</span> {product.category}
+        </p>
+        <p className="productdisplay-right-category">
+          <span>Tags:</span> Modern, Latest
+        </p>
       </div>
     </div>
   );
