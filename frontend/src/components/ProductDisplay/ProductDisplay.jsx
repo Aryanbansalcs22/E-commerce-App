@@ -54,7 +54,7 @@ const ProductDisplay = ({ product }) => {
 
         <div className="productdisplay-right-size">
           <h3>Select Size</h3>
-          <div className="size-option">
+          <div className="size-button-wrapper">
             {["S", "M", "L", "XL", "XXL"].map((size) => (
               <button
                 key={size}
