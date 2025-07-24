@@ -5,7 +5,7 @@ import star_dull_icon from "../Assets/star_dull_icon.png";
 import { ShopContext } from "../../context/ShopContext";
 
 const ProductDisplay = ({ product }) => {
-  const { addToCart, isLoggedIn } = useContext(ShopContext); // Added isLoggedIn
+  const { addToCart, isLoggedIn } = useContext(ShopContext);
   const [selectedSize, setSelectedSize] = useState("");
   const [error, setError] = useState("");
 
@@ -22,6 +22,7 @@ const ProductDisplay = ({ product }) => {
 
     setError("");
     addToCart(product.id, selectedSize);
+    alert("Product added to cart!");
   };
 
   return (
@@ -65,7 +66,10 @@ const ProductDisplay = ({ product }) => {
               <button
                 key={size}
                 className={`size-option ${selectedSize === size ? "selected" : ""}`}
-                onClick={() => setSelectedSize(size)}
+                onClick={() => {
+                  setSelectedSize(size);
+                  setError(""); // clear previous error
+                }}
               >
                 {size}
               </button>
